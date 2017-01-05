@@ -283,6 +283,14 @@ var Resolver = DefaultResolver.extend({
   chooseModuleName: function(moduleName, parsedName) {
     var underscoredModuleName = underscore(moduleName);
 
+    if (parsedName.type === 'helper' && parsedName.fullName.indexOf('.') >= 0) {
+      Ember.deprecate('Modules should not contain periods. ' +
+        'Attempted to lookup "'+parsedName.fullName+'" which ' +
+        'was not found. Please rename "'+parsedName.fullName+'" '+
+        'to "'+parsedName.fullName.replace(/\./, '/')+'" instead.', false,
+        { id: 'ember-resolver.dotnotation-modules'/*, until: '3.0.0'*/ });
+    }
+
     if (moduleName !== underscoredModuleName && this._moduleRegistry.has(moduleName) && this._moduleRegistry.has(underscoredModuleName)) {
       throw new TypeError("Ambiguous module names: `" + moduleName + "` and `" + underscoredModuleName + "`");
     }
